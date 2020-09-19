@@ -8,6 +8,7 @@ namespace BlackJackProject
 {
     class ProgramUI
     {
+        CardValueGenerator cardValueGenerator = new CardValueGenerator();
 
         public void Run()
         {
@@ -18,12 +19,13 @@ namespace BlackJackProject
         private void Menu()
         {
             bool keepRunning = true;
+
+
             while (keepRunning)
             {
                 Console.WriteLine("Welcome to Blackjack!!!\n" +
                   "1. Play a new game of Blackjack!\n" +
-                  "2. Continue to play!\n" +
-                  "3. Exit the game!");
+                  "2. Exit the game!");
 
                 //Get users input
 
@@ -35,8 +37,6 @@ namespace BlackJackProject
                         GameMenu();
                         break;
                     case "2":
-                        break;
-                    case "3":
                         Console.WriteLine("Thank you for playing Blackjack!");
                         Console.WriteLine("Press any key to continue...");
                         Console.ReadKey();
@@ -49,33 +49,80 @@ namespace BlackJackProject
             }
         }
 
+
         public void GameMenu()
         {
             bool keepRunning = true;
             while (keepRunning)
             {
+
                 Console.Clear();
                 Console.WriteLine("Here We Go!\n" +
-                    "1. Hit\n" +
-                    "2. Stay\n" +
-                    "3. Exit");
+                    "1. Deal\n" +
+                    "2. Hit\n" +
+                    "3. Stay\n" +
+                    "4. Main Menu");
                 string input = Console.ReadLine();
 
+                Players player = new Players();
+                Players dealer = new Players();
+
+
+                player.PlayerScore = 0;
+                dealer.DealerScore = 0;
                 switch (input)
                 {
                     case "1":
-                        Hit();
+                        // dealerHand = cardGen...Hit(dealerHand)
+                        dealer.DealerScore = Cards();
+                        Console.WriteLine("Dealer score: " + dealer.DealerScore);
+                        Console.ReadKey();
+                        // Dealer is showing: dealerHand
+                        player.PlayerScore = Cards();
+                        Console.WriteLine("Player score: " + player.PlayerScore);
+                        Console.ReadKey();
+                        // Display player hand
                         break;
                     case "2":
-                        Stay();
+                        player.PlayerScore = Hit(player.PlayerScore);
+                        // Display player hand
+                        if (player.PlayerScore > 21)
+                        {
+                            Console.WriteLine("You busted");
+                        }
+                        keepRunning = false;
                         break;
                     case "3":
+                        dealer.DealerScore = Stay();
+                        if (player.PlayerScore == 21 && dealer.DealerScore == 21)
+                        {
+                            Console.WriteLine("Push");
+                        }
+                        else
+                        {
+                            if (dealer.DealerScore < 22)
+                            {
+                                if (dealer.DealerScore > player.PlayerScore)
+                                { 
+                                    Console.WriteLine("You lose."); 
+                                }
+                                // compare dealer to player to determine winner
+                            }
+                            else
+                            { //dealer busted, player wins
+
+                                Console.WriteLine("You WIN!!!");
+                            }
+                        }
+                        break;
+                    case "4":
                         Console.WriteLine("Thank you for playing Blackjack!");
                         Console.ReadKey();
                         keepRunning = false;
+                        Console.Clear();
                         break;
                     default:
-                        Console.WriteLine("Please choose an option, 1-3.");
+                        Console.WriteLine("Please choose an option, 1-4.");
                         break;
                 }
             }
@@ -83,22 +130,29 @@ namespace BlackJackProject
 
         }
 
-        public void Hit()
+        public int Stay()
         {
-            CardValueGenerator cardValueGenerator = new CardValueGenerator();
-            int cardValueGenerator.Deal
-
-
+            int dealerHand = cardValueGenerator.Deal();
+            while (dealerHand < 16)
+            {
+                dealerHand = cardValueGenerator.Hit(dealerHand);
+            }
+            return dealerHand;
         }
 
-        public void Stay()
+        public int Cards()
         {
-
+            int playerCards = cardValueGenerator.Deal();
+            return playerCards;
         }
 
-
-
+        public int Hit(int playerHand)
+        {
+            int playerCards = cardValueGenerator.Hit(playerHand);
+            return playerHand;
+        }
     }
 }
+
 
 
